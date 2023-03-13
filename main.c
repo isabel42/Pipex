@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:49:04 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/09 10:41:47 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/10 16:11:50 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,66 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-#include "pipex.h"
+#include "libft/libft.h"
 
-
-int main(int argc, char **argv)
+char	*ft_find_path(char *path, char *command)
 {
-	char *flags1[] = {"-la", NULL};
-	char *flags2[] = {"-l", NULL};
+	char	**path_split;
+	char	*path_command;
+	int		i;
+
+	i = 0;
+	command = ft_strjoin("/",command);
+	path_split = ft_split(path, ':');
+	while (path_split[i])
+	{
+		path_command = ft_strjoin(path_split[i], command);
+		if (access(path_command, X_OK) == 0)
+			break;
+		free(path_command);
+		i++;
+	}
+	i = 0;
+	while (path_split[i])
+	{
+		free(path_split[i]);
+		i++;
+	}
+	free(path_split);
+	free(command);
+	return (path_command);
+}
+
+
+int main(int argc, char **argv, char **envp)
+{
+	if (argc == 10)
+		return(10);
+	char *flags1[] = {"pipex", "-la", NULL};
+	// char *flags1[] = {"ping", "-c", "5", "google.com", NULL};
+	char *flags2[] = {"pipex", "-l", NULL};
 	int p1[2]; // c -> p
 	if(pipe(p1) == -1)
-		return 1;
+		return 1; 
 	int pid1 = fork();
 	if (pid1 < 0)
 		return 2;
 	if (pid1 == 0)
 	{
-		//Child process 1
 		dup2(p1[1], STDOUT_FILENO);
 		close(p1[0]);
 		close(p1[1]);
-		execve("/bin/ls", flags1, NULL);
+		execve(ft_find_path(envp [5], argv[1]), flags1, NULL);
 	}
 	int pid2 = fork();
 	if (pid2 < 0)
 		return 2;
 	if (pid2 == 0)
 	{
-		//Child process 2
 		dup2(p1[0], STDIN_FILENO);
 		close(p1[0]);
 		close(p1[1]);
-		execve("/bin/wc", flags2, NULL);
+		execve(ft_find_path(envp [5], argv[2]), flags2, NULL);
 	}
 	close(p1[0]);
 	close(p1[1]);
@@ -52,41 +81,3 @@ int main(int argc, char **argv)
 	waitpid(pid2, NULL, 0);
 	return 0;
 } 
-
-// int main()
-// {
-// 	int p1[2]; // c -> p
-// 	int p2[2]; // p -> c
-// 	pipe(p1);
-// 	pipe(p2);
-// 	int pid = fork();
-// 	if (pid == 0)
-// 	{
-// 		//Child process
-// 		close(p1[0]);
-// 		close(p2[1]);
-// 		int x;
-// 		read(p2[0], &x, sizeof(x));
-// 		printf("Received %d\n", x);
-// 		x *= 4;
-// 		write(p1[0], &x, sizeof(x));
-// 		printf("Wrote %d\n", x);
-// 		close(p1[1]);
-// 		close(p2[0]);	
-// 	}
-// 	else
-// 	{
-// 		//Parent process
-// 		close(p1[1]);
-// 		close(p2[0]);
-// 		int x = 4;
-// 		write(p2[1], &x, sizeof(x));
-// 		printf("Wrote %d\n", x);
-// 		x *= 4;
-// 		read(p1[0], &x, sizeof(x));
-// 		printf("Result is %d\n", x);
-// 		close(p1[0]);
-// 		close(p2[1]);
-// 		wait (NULL);	
-// 	}
-// } 

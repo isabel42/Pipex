@@ -1,23 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   ft_lstmap_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/21 18:09:28 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/08 19:51:04 by itovar-n         ###   ########.fr       */
+/*   Created: 2022/11/04 14:43:57 by itovar-n          #+#    #+#             */
+/*   Updated: 2022/11/08 14:11:36 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
-# include <unistd.h>
-# include <fcntl.h>
-# include <stdio.h>
-# include <stdlib.h>
+#include "libft.h"
 
-size_t	ft_strlen(char *s);
-char	*ft_strjoin(char *s1, char *s2);
+t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
+{
+	t_list	*sol;
+	t_list	*cp;
 
-#endif
+	cp = NULL;
+	while (lst)
+	{
+		sol = ft_lstnew(f(lst->content));
+		if (!sol)
+		{
+			ft_lstclear(&cp, (del));
+			return (NULL);
+		}
+		ft_lstadd_back(&cp, sol);
+		lst = lst->next;
+	}
+	return (cp);
+}

@@ -1,52 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   outils.c                                           :+:      :+:    :+:   */
+/*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/08 19:06:56 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/08 19:11:10 by itovar-n         ###   ########.fr       */
+/*   Created: 2022/10/31 15:54:27 by itovar-n          #+#    #+#             */
+/*   Updated: 2022/11/01 10:49:52 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "libft.h"
+#include <stdlib.h>
 
-size_t	ft_strlen( char *s)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	int	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	size_t	len_s1;
-	size_t	len_s2;
 	char	*sol;
 	size_t	i;
+	size_t	len_s;
 
-	len_s1 = ft_strlen(s1);
-	len_s2 = ft_strlen(s2);
 	i = 0;
-	sol = malloc((len_s1 + len_s2 + 1) * sizeof(*s1));
-	if (!sol)
+	if (s == NULL)
 		return (NULL);
-	while (i < len_s1)
+	len_s = ft_strlen(s);
+	if (len_s < start)
+		len = 0;
+	else if (ft_strlen(s + start) <= len)
+		len = len_s - start;
+	sol = ft_calloc(sizeof(*s), len + 1);
+	if (sol == NULL)
+		return (NULL);
+	while (i < len)
 	{
-		sol[i] = s1[i];
-		s1[i] = '\0';
+		sol[i] = s[start + i];
 		i++;
 	}
-	while (i < len_s1 + len_s2)
-	{
-		sol[i] = s2[i - len_s1];
-		i++;
-	}
-	free(s1);
-	sol [i] = '\0';
 	return (sol);
 }
+/*
+int main()
+{
+	ft_substr("hola", 10, 99);
+}*/
