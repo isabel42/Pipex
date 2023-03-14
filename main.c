@@ -6,28 +6,59 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:49:04 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/13 16:51:26 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/14 22:20:57 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdio.h>
+#include <errno.h>
 #include <sys/wait.h>
 #include <fcntl.h>
 #include "libft/libft.h"
 
-char	*ft_path(char **envp)
+void	ft_free_cc(char **split)
+{
+	int i;
+	
+	i = 0;
+	while (split[i])
+	{
+		free(split[i]);
+		i++;
+	}
+	free(split);
+}
+
+char	*ft_envp(char **envp, char *pwd)
 {
 	int	i;
 
 	i = 0;
 	while (envp[i])
 	{
-		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-			return (envp[i]);
+		if (ft_strncmp(envp[i], pwd, ft_strlen(pwd)) == 0)
+			return (envp[i] + ft_strlen(pwd));
 		i++;
 	}
 	return (NULL);
+}
+
+char	*ft_find_pwd(char *pwd, char *infile)
+{
+	char	*pwd_infile;
+
+	infile = ft_strjoin("/", infile);
+	pwd_infile = ft_strjoin(pwd, infile);
+	if (access(pwd_infile, R_OK) == 0)
+	{
+		free(infile);
+		return (pwd_infile);
+	}
+	free(infile);
+	free(pwd_infile);
+	perror("zsh");
+	exit(0);
 }
 
 char	*ft_find_path(char *path, char *command)
@@ -43,70 +74,68 @@ char	*ft_find_path(char *path, char *command)
 	{
 		path_command = ft_strjoin(path_split[i], command);
 		if (access(path_command, X_OK) == 0)
-			break ;
+		{
+			ft_free_cc(path_split);
+			free(command);
+			return (path_command);
+		}
 		free(path_command);
 		i++;
 	}
-	i = 0;
-	while (path_split[i])
-	{
-		free(path_split[i]);
-		i++;
-	}
-	free(path_split);
+	ft_free_cc(path_split);
 	free(command);
-	return (path_command);
+	return(NULL);
 }
 
 char	*ft_command (char **argv, int i)
 {
-	char	**command_flags;
 	char	*command;
 	int		j;
 
 	j = 0;
-	command_flags = ft_split(argv[i + 1], ' ');
-	command = command_flags[0];
-	while (command_flags[j])
-	{
-		free(command_flags[j]);
+	while(argv[i + 1][j] != ' ')
 		j++;
+	command = ft_calloc(j + 1, sizeof(command));
+	j--;
+	while (j >= 0)
+	{
+		command[j] = argv[i + 1][j];
+		j--;
 	}
-	free(command_flags);
 	return(command);
 }
 
 char	*ft_flags (char **argv, int i)
 {
-	char	**command_flags;
-	char	*command;
 	char	*flags;
 	int		j;
 
 	j = 0;
-	command_flags = ft_split(argv[i + 1], ' ');
-	command = command_flags[0];
-	flags = ft_strtrim(argv[i + 1], command);
-	flags = ft_strtrim(flags, " ");
-	while (command_flags[j])
-	{
-		free(command_flags[j]);
+	while (argv[i + 1][j] != ' ')
 		j++;
-	}
-	free(command_flags);
-	printf("flags:%s\n", flags);
-	return(flags);
+	flags = argv[i + 1] + j + 1;
+	return (flags);
 }
 
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	*flags1[] = {"pipex", "-la", NULL};
-	char	*flags2[] = {"pipex", "-l", NULL};
-	int		p1[2];
+	if (argc != 5)
+		return (0);
 
-	if (argc == 10)
-		return (10);
+	char *path = ft_envp(envp, "PATH=");
+	char *pwd = ft_envp(envp, "PWD=");
+
+	char	*command1 = ft_command (argv, 1);
+	char	*command2 = ft_command (argv, 2);
+	char	*flags1[] = {"pipex", ft_flags(argv, 1), NULL};
+	char	*flags2[] = {"pipex",  ft_flags(argv, 2), NULL};
+	char	*pathname1 = ft_find_path(path, command1);
+	char	*pathname2 = ft_find_path(path, command2);
+	char	*pathinfile = ft_find_pwd(pwd, argv[1]);
+	char	*pathoutfile = ft_find_pwd(pwd, argv[4]);
+
+	int		p1[2];
 	if (pipe(p1) == -1)
 		return 1;
 	int	pid1 = fork();
@@ -114,24 +143,35 @@ int	main(int argc, char **argv, char **envp)
 		return (2);
 	if (pid1 == 0)
 	{
+		p1[0] = open (pathinfile, O_RDONLY);
+		dup2(p1[0], STDIN_FILENO);
 		dup2(p1[1], STDOUT_FILENO);
 		close(p1[0]);
 		close(p1[1]);
-		execve(ft_find_path(ft_path(envp), argv[1]), flags1, NULL);
+		execve(pathname1, flags1, NULL);
 	}
 	int pid2 = fork();
 	if (pid2 < 0)
 		return (2);
 	if (pid2 == 0)
 	{
+		int a = open (pathoutfile, O_TRUNC | O_CREAT | O_RDWR);
 		dup2(p1[0], STDIN_FILENO);
+		dup2(a, STDOUT_FILENO);
 		close(p1[0]);
 		close(p1[1]);
-		execve(ft_find_path(ft_path(envp), argv[2]), flags2, NULL);
+		execve(pathname2, flags2, NULL);
 	}
 	close(p1[0]);
 	close(p1[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, NULL, 0);
+	free(command1);
+	free(command2);
+	free(pathname1);
+	free(pathname2);
+	free(pathinfile);
+	free(pathoutfile);
+	
 	return (0);
 } 
