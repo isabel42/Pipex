@@ -6,9 +6,12 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/15 13:38:04 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:19:41 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
+#include "libpipex.h"
 
 char	*ft_envp(char **envp, char *pwd)
 {
@@ -99,7 +102,7 @@ char	*ft_flags (char **argv, int i)
 	return (flags);
 }
 
-t_param ft_param(char **argv, char **envp, int i)
+t_param *ft_param(char **argv, char **envp, int i)
 {
     t_param	*elem;
     char	*path;
@@ -110,13 +113,11 @@ t_param ft_param(char **argv, char **envp, int i)
 	pwd = ft_envp(envp, "PWD=");
     command = ft_command (argv, i);
     
-	elem->command = command;
-	elem->flags[] = {"pipex", ft_flags(argv, i), NULL};
+	elem->flags = {"pipex", ft_flags(argv, i), NULL};
 	elem->pathname = ft_find_path(path, command);
 	elem->pathinfile = ft_find_pwd(pwd, argv[1], i);
 	elem->pathoutfile = ft_find_pwd(pwd, argv[4], i);
-    elem->path = path;
-	elem->pwd = pwd;
+    free(command);
 
     return(elem);
 }

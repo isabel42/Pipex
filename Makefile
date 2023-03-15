@@ -1,4 +1,6 @@
-SRCS	= main.c 
+SRCS	= main.c \
+			constants.c \
+			free.c
 
 OBJS 	= ${SRCS:.c=.o}
 
