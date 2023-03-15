@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/15 15:19:41 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/15 16:09:48 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,20 @@ char	*ft_find_path(char *path, char *command)
 {
 	char	**path_split;
 	char	*path_command;
+	char	*slash_command;
 	int		i;
 
 	i = 0;
-	command = ft_strjoin("/", command);
+	slash_command = ft_strjoin("/", command);
 	path_split = ft_split(path, ':');
 	while (path_split[i])
 	{
-		path_command = ft_strjoin(path_split[i], command);
+		path_command = ft_strjoin(path_split[i], slash_command);
 		if (access(path_command, X_OK) == 0)
 		{
 			ft_free_cc(path_split);
 			free(command);
+			free(slash_command);
 			return (path_command);
 		}
 		free(path_command);
@@ -67,6 +69,7 @@ char	*ft_find_path(char *path, char *command)
 	}
 	ft_free_cc(path_split);
 	free(command);
+	free(slash_command);
 	return(NULL);
 }
 
@@ -90,18 +93,6 @@ char	*ft_command (char **argv, int i)
 	return(command);
 }
 
-char	*ft_flags (char **argv, int i)
-{
-	char	*flags;
-	int		j;
-
-	j = 0;
-	while (argv[i + 1][j] != ' ')
-		j++;
-	flags = argv[i + 1] + j + 1;
-	return (flags);
-}
-
 t_param *ft_param(char **argv, char **envp, int i)
 {
     t_param	*elem;
@@ -109,11 +100,13 @@ t_param *ft_param(char **argv, char **envp, int i)
 	char	*pwd;
     char	*command;
 
-    path = ft_envp(envp, "PATH=");
+    elem = malloc(sizeof(elem) * 1);
+	if (!elem)
+		exit(0);
+	path = ft_envp(envp, "PATH=");
 	pwd = ft_envp(envp, "PWD=");
     command = ft_command (argv, i);
-    
-	elem->flags = {"pipex", ft_flags(argv, i), NULL};
+	
 	elem->pathname = ft_find_path(path, command);
 	elem->pathinfile = ft_find_pwd(pwd, argv[1], i);
 	elem->pathoutfile = ft_find_pwd(pwd, argv[4], i);

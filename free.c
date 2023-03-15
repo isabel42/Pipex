@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:45:03 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/15 15:17:12 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/15 15:59:40 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,5 @@ void ft_free_param (t_param *elem)
 	free(elem->pathname);
 	free(elem->pathinfile);
 	free(elem->pathoutfile);
+	free(elem);
 }
