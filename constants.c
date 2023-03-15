@@ -1,34 +1,14 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   constants.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/08 19:49:04 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/15 13:40:35 by itovar-n         ###   ########.fr       */
+/*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
+/*   Updated: 2023/03/15 13:38:04 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include "libft/libft.h"
-
-void	ft_free_cc(char **split)
-{
-	int i;
-	
-	i = 0;
-	while (split[i])
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
-}
 
 char	*ft_envp(char **envp, char *pwd)
 {
@@ -96,6 +76,8 @@ char	*ft_command (char **argv, int i)
 	while(argv[i + 1][j] != ' ')
 		j++;
 	command = ft_calloc(j + 1, sizeof(command));
+    if (!command)
+        exit(0);
 	j--;
 	while (j >= 0)
 	{
@@ -117,72 +99,24 @@ char	*ft_flags (char **argv, int i)
 	return (flags);
 }
 
-
-int	main(int argc, char **argv, char **envp)
+t_param ft_param(char **argv, char **envp, int i)
 {
-	if (argc != 5)
-		return (0);
+    t_param	*elem;
+    char	*path;
+	char	*pwd;
+    char	*command;
 
-	t_param first;
-	t_param second;
+    path = ft_envp(envp, "PATH=");
+	pwd = ft_envp(envp, "PWD=");
+    command = ft_command (argv, i);
+    
+	elem->command = command;
+	elem->flags[] = {"pipex", ft_flags(argv, i), NULL};
+	elem->pathname = ft_find_path(path, command);
+	elem->pathinfile = ft_find_pwd(pwd, argv[1], i);
+	elem->pathoutfile = ft_find_pwd(pwd, argv[4], i);
+    elem->path = path;
+	elem->pwd = pwd;
 
-	fisrt = ft_param(argv, envp, 1);
-	second = ft_param(argv, envp, 2);
-	char *path = ft_envp(envp, "PATH=");
-	char *pwd = ft_envp(envp, "PWD=");
-
-	char	*command1 = ft_command (argv, 1);
-	char	*command2 = ft_command (argv, 2);
-	char	*flags1[] = {"pipex", ft_flags(argv, 1), NULL};
-	char	*flags2[] = {"pipex",  ft_flags(argv, 2), NULL};
-	char	*pathname1 = ft_find_path(path, command1);
-	char	*pathname2 = ft_find_path(path, command2);
-	char	*pathinfile = ft_find_pwd(pwd, argv[1], 1);
-	char	*pathoutfile = ft_find_pwd(pwd, argv[4], 2);
-
-	int		p1[2];
-	if (pipe(p1) == -1)
-		return 1;
-	int	pid1 = fork();
-	if (pid1 < 0)
-		return (2);
-	if (pid1 == 0)
-	{
-		p1[0] = open (pathinfile, O_RDONLY | O_CLOEXEC);
-		if (p1[0] > 0)
-		{
-			dup2(p1[0], STDIN_FILENO);
-			dup2(p1[1], STDOUT_FILENO);
-			close(p1[0]);
-			close(p1[1]);
-			execve(pathname1, flags1, NULL);
-		}
-		close(p1[0]);
-		close(p1[1]);
-		return(0);
-	}
-	int pid2 = fork();
-	if (pid2 < 0)
-		return (2);
-	if (pid2 == 0)
-	{
-		int a = open (pathoutfile, O_TRUNC | O_CREAT | O_WRONLY | O_CLOEXEC, 00777);
-		dup2(p1[0], STDIN_FILENO);
-		dup2(a, STDOUT_FILENO);
-		close(p1[0]);
-		close(p1[1]);
-		execve(pathname2, flags2, NULL);
-	}
-	close(p1[0]);
-	close(p1[1]);
-	waitpid(pid1, NULL, 0);
-	waitpid(pid2, NULL, 0);
-	free(command1);
-	free(command2);
-	free(pathname1);
-	free(pathname2);
-	free(pathinfile);
-	free(pathoutfile);
-	
-	return (0);
-} 
+    return(elem);
+}
