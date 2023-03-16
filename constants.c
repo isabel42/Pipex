@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/15 16:09:48 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/15 18:12:15 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,13 @@ char	*ft_envp(char **envp, char *pwd)
 	return (NULL);
 }
 
-char	*ft_find_pwd(char *pwd, char *infile, int i)
+char	*ft_find_pwd(char *pwd, char *infile)
 {
 	char	*pwd_infile;
 
 	infile = ft_strjoin("/", infile);
 	pwd_infile = ft_strjoin(pwd, infile);
-	if (access(pwd_infile, R_OK) == 0)
-	{
-		free(infile);
-		return (pwd_infile);
-	}
 	free(infile);
-	if (i == 1)
-		perror("zsh");
 	return (pwd_infile);
 }
 
@@ -108,9 +101,23 @@ t_param *ft_param(char **argv, char **envp, int i)
     command = ft_command (argv, i);
 	
 	elem->pathname = ft_find_path(path, command);
-	elem->pathinfile = ft_find_pwd(pwd, argv[1], i);
-	elem->pathoutfile = ft_find_pwd(pwd, argv[4], i);
+	elem->pathinfile = ft_find_pwd(pwd, argv[1]);
+	elem->pathoutfile = ft_find_pwd(pwd, argv[4]);
     free(command);
 
     return(elem);
+}
+
+char **ft_param (char **param, char **argv, char **envp)
+{
+	char	*command;
+	char	*pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[1]);
+	char	*pathname1 = ft_find_path(ft_envp(envp, "PATH="), ft_command (argv, 1));
+	char	*flags1;
+
+	command = ft_command (argv, 1);
+	pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[1]);
+	pathname1 = ft_find_path(ft_envp(envp, "PATH="), ft_command (argv, 1));
+	flags1 = ft_flags(argv, 1);
+
 }

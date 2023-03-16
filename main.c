@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:49:04 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/15 16:11:46 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/15 18:12:15 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,16 @@ int	main(int argc, char **argv, char **envp)
 {
 	if (argc != 5)
 		return (0);
-	char	*flags1[] = {"pipex", ft_flags(argv, 1), NULL};
-	char	*flags2[] = {"pipex",  ft_flags(argv, 2), NULL};
+	char	**param = malloc(sizeof(param) * 4);
+	if(!param)
+		return(NULL);
+	
+	char	*flags1[] = {argv[0], ft_flags(argv, 1), NULL};
+	char	*flags2[] = {argv[0],  ft_flags(argv, 2), NULL};
 	char	*pathname1 = ft_find_path(ft_envp(envp, "PATH="), ft_command (argv, 1));
 	char	*pathname2 = ft_find_path(ft_envp(envp, "PATH="), ft_command (argv, 2));
-	char	*pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[1], 1);
-	char	*pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[4], 2);
+	char	*pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[1]);
+	char	*pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[4]);
 
 	int		p1[2];
 	if (pipe(p1) == -1)
@@ -43,7 +47,9 @@ int	main(int argc, char **argv, char **envp)
 	if (pid1 == 0)
 	{
 		p1[0] = open (pathinfile, O_RDONLY | O_CLOEXEC);
-		if (p1[0] > 0)
+		if (p1[0] < 0)
+			perror("zsh");
+		else
 		{
 			dup2(p1[0], STDIN_FILENO);
 			dup2(p1[1], STDOUT_FILENO);
