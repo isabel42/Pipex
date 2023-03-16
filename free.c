@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:45:03 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/16 14:55:00 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/16 15:48:08 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,16 @@ void	ft_free_param(char **param)
 
 void ft_fork(char **param1, int pid1, int *p1)
 {
-	char	*flags1[] = {param1[4], param1[0], NULL};
+	char	**flags1;
+
+	flags1 = malloc(sizeof(flags1) * 3);
+	if(!flags1)
+		exit(0);
+	flags1[0] = param1[4];
+	flags1[1] = param1[0];
+	flags1[2] = NULL;
+	if (pid1 < 0)
+		exit (2);
 	if (pid1 == 0)
 	{
 		p1[0] = open (param1[2], O_RDONLY | O_CLOEXEC);
@@ -54,4 +63,29 @@ void ft_fork(char **param1, int pid1, int *p1)
 		close(p1[1]);
 		exit(0);
 	}
+}
+
+void ft_fork2(char **param2, int pid2, int *p1)
+{
+	char	**flags2;
+	
+	flags2 = malloc(sizeof(flags2) * 3);
+	if(!flags2)
+		exit(0);
+	flags2[0] = param2[4];
+	flags2[1] = param2[0];
+	flags2[2] = NULL;
+
+	if (pid2 < 0)
+		exit (2);
+	if (pid2 == 0)
+	{
+		int a = open (param2[3], O_TRUNC | O_CREAT | O_WRONLY | O_CLOEXEC, 00777);
+		dup2(p1[0], STDIN_FILENO);
+		dup2(a, STDOUT_FILENO);
+		close(p1[0]);
+		close(p1[1]);
+		execve(param2[1], flags2, NULL);
+	}
+	free(flags2);
 }

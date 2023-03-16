@@ -6,10 +6,9 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/16 14:54:35 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/16 16:08:03 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "libpipex.h"
 
@@ -61,31 +60,10 @@ char	*ft_find_path(char *path, char *command)
 	}
 	ft_free_cc(path_split);
 	free(slash_command);
-	return(NULL);
+	return (NULL);
 }
 
-char	*ft_command (char **argv, int i)
-{
-	char	*command;
-	int		j;
-
-	j = 0;
-	while(argv[i + 1][j] != ' ')
-		j++;
-	command = ft_calloc(j + 1, sizeof(command));
-    if (!command)
-        exit(0);
-	j--;
-	while (j >= 0)
-	{
-		command[j] = argv[i + 1][j];
-		j--;
-	}
-	return(command);
-}
-
-
-char	*ft_flags (char **argv, int i)
+char	*ft_flags(char **argv, int i)
 {
 	char	*flags;
 	int		j;
@@ -97,28 +75,56 @@ char	*ft_flags (char **argv, int i)
 	return (flags);
 }
 
-char **ft_param (char **argv, char **envp, int argc)
+char	**ft_param(int argc, char **argv, char **envp, int i)
 {
 	char	**command;
 	char	**param;
-	char	*flags;
-	char	*pathname;
 	char	*pathinfile;
 	char	*pathoutfile;
 
 	param = malloc(sizeof(param) * 5);
-	if(!param)
+	if (!param)
 		exit(0);
-	command = ft_split(argv[argc + 1], ' ');
-	flags = ft_flags(argv, argc);
-	pathname = ft_find_path(ft_envp(envp, "PATH="), command[0]);
-	pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[1]);
-	pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[4]);
-	param[0] = flags;
-	param[1] = pathname;
+	command = ft_split(argv[i + 1], ' ');
+	pathinfile = NULL;
+	if (i == 1)
+		pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[i]);
+	pathoutfile = NULL;
+	if (i == argc - 3)
+		pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[argc - 1]);
+	param[0] = ft_flags(argv, i);
+	param[1] = ft_find_path(ft_envp(envp, "PATH="), command[0]);
 	param[2] = pathinfile;
 	param[3] = pathoutfile;
 	param[4] = argv[0];
 	ft_free_cc(command);
-	return(param);
+	return (param);
+}
+
+t_param	*ft_param_s(int argc, char **argv, char **envp, int i)
+{
+	t_param *param;
+	char	**command;
+
+	param = malloc(sizeof(param) * 1);
+	if (!param)
+		exit(0);
+	command = ft_split(argv[i + 1], ' ');
+
+	param->flags = malloc(sizeof(param->flags) * 3);
+	if(!param->flags)
+		exit(0);
+	param->flags[0] = argv[0];
+	param->flags[1] = ft_flags(argv, i);
+	param->flags[2] = NULL;
+	param->pathname = ft_find_path(ft_envp(envp, "PATH="), command[0]);;
+	param->pathinfile = NULL;
+	if (i == 1)
+		param->pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[i]);
+	param->pathoutfile = NULL;
+	if (i == argc - 3)
+		param->pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[argc - 1]);
+	param->name = argv[0];
+	ft_free_cc(command);
+	return (param);
 }
