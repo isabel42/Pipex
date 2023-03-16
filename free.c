@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:45:03 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/15 18:00:18 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/16 14:55:00 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,21 @@ void	ft_free_cc(char **split)
 	free(split);
 }
 
-void ft_free_param (t_param *elem)
+void	ft_free_param(char **param)
 {
-	free(elem->pathname);
-	free(elem->pathinfile);
-	free(elem->pathoutfile);
-	free(elem);
+	free(param[1]);
+	free(param[2]);
+	free(param[3]);
+	free(param);
+	
 }
 
-void ft_fork(int pid, char **argv, char **envp, int *p1)
+void ft_fork(char **param1, int pid1, int *p1)
 {
-	char	*pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[1]);
-	char	*pathname1 = ft_find_path(ft_envp(envp, "PATH="), ft_command (argv, 1));
-	char	*flags1[] = {argv[0], ft_flags(argv, 1), NULL};
-
-	if (pid == 0)
+	char	*flags1[] = {param1[4], param1[0], NULL};
+	if (pid1 == 0)
 	{
-		p1[0] = open (pathinfile, O_RDONLY | O_CLOEXEC);
+		p1[0] = open (param1[2], O_RDONLY | O_CLOEXEC);
 		if (p1[0] < 0)
 			perror("zsh");
 		else
@@ -50,10 +48,10 @@ void ft_fork(int pid, char **argv, char **envp, int *p1)
 			dup2(p1[1], STDOUT_FILENO);
 			close(p1[0]);
 			close(p1[1]);
-			execve(pathname1, flags1, NULL);
+			execve(param1[1], flags1, NULL);
 		}
 		close(p1[0]);
 		close(p1[1]);
-		return(0);
+		exit(0);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/15 18:12:15 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/16 14:54:35 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ char	*ft_find_path(char *path, char *command)
 		if (access(path_command, X_OK) == 0)
 		{
 			ft_free_cc(path_split);
-			free(command);
 			free(slash_command);
 			return (path_command);
 		}
@@ -61,7 +60,6 @@ char	*ft_find_path(char *path, char *command)
 		i++;
 	}
 	ft_free_cc(path_split);
-	free(command);
 	free(slash_command);
 	return(NULL);
 }
@@ -86,38 +84,41 @@ char	*ft_command (char **argv, int i)
 	return(command);
 }
 
-t_param *ft_param(char **argv, char **envp, int i)
+
+char	*ft_flags (char **argv, int i)
 {
-    t_param	*elem;
-    char	*path;
-	char	*pwd;
-    char	*command;
+	char	*flags;
+	int		j;
 
-    elem = malloc(sizeof(elem) * 1);
-	if (!elem)
-		exit(0);
-	path = ft_envp(envp, "PATH=");
-	pwd = ft_envp(envp, "PWD=");
-    command = ft_command (argv, i);
-	
-	elem->pathname = ft_find_path(path, command);
-	elem->pathinfile = ft_find_pwd(pwd, argv[1]);
-	elem->pathoutfile = ft_find_pwd(pwd, argv[4]);
-    free(command);
-
-    return(elem);
+	j = 0;
+	while (argv[i + 1][j] != ' ')
+		j++;
+	flags = argv[i + 1] + j + 1;
+	return (flags);
 }
 
-char **ft_param (char **param, char **argv, char **envp)
+char **ft_param (char **argv, char **envp, int argc)
 {
-	char	*command;
-	char	*pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[1]);
-	char	*pathname1 = ft_find_path(ft_envp(envp, "PATH="), ft_command (argv, 1));
-	char	*flags1;
+	char	**command;
+	char	**param;
+	char	*flags;
+	char	*pathname;
+	char	*pathinfile;
+	char	*pathoutfile;
 
-	command = ft_command (argv, 1);
+	param = malloc(sizeof(param) * 5);
+	if(!param)
+		exit(0);
+	command = ft_split(argv[argc + 1], ' ');
+	flags = ft_flags(argv, argc);
+	pathname = ft_find_path(ft_envp(envp, "PATH="), command[0]);
 	pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[1]);
-	pathname1 = ft_find_path(ft_envp(envp, "PATH="), ft_command (argv, 1));
-	flags1 = ft_flags(argv, 1);
-
+	pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[4]);
+	param[0] = flags;
+	param[1] = pathname;
+	param[2] = pathinfile;
+	param[3] = pathoutfile;
+	param[4] = argv[0];
+	ft_free_cc(command);
+	return(param);
 }

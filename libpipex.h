@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:08:08 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/15 17:42:37 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/16 14:52:23 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,15 @@
 #include <fcntl.h>
 #include "libft/libft.h"
 
-typedef struct s_param
-{
-    char    *pathname;
-	char    *pathinfile;
-    char    *pathoutfile;
-}   t_param;
-
 char	*ft_envp(char **envp, char *pwd);
 char	*ft_find_pwd(char *pwd, char *infile);
 char	*ft_find_path(char *path, char *command);
 char	*ft_command (char **argv, int i);
-t_param *ft_param(char **argv, char **envp, int i);
+char	*ft_flags (char **argv, int i);
+char **ft_param (char **argv, char **envp, int argc);
 
 void	ft_free_cc(char **split);
-void ft_free_param (t_param *elem);
+void  ft_free_param (char **param);
+void ft_fork(char **param, int pid, int *p1);
 
 #endif
