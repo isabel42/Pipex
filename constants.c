@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/16 16:08:03 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/16 16:45:18 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,13 +118,14 @@ t_param	*ft_param_s(int argc, char **argv, char **envp, int i)
 	param->flags[1] = ft_flags(argv, i);
 	param->flags[2] = NULL;
 	param->pathname = ft_find_path(ft_envp(envp, "PATH="), command[0]);;
-	param->pathinfile = NULL;
-	if (i == 1)
-		param->pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[i]);
-	param->pathoutfile = NULL;
-	if (i == argc - 3)
-		param->pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[argc - 1]);
-	param->name = argv[0];
+	// param->pathinfile = NULL;
+	// if (i == 1)
+		param->pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[1]);
+	// param->pathoutfile = NULL;
+	// if (i == argc - 3)
+		param->pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[4]);
 	ft_free_cc(command);
+	if(argc > 7)
+	return (0);
 	return (param);
 }

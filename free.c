@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:45:03 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/16 15:48:08 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/16 16:42:04 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void ft_fork(char **param1, int pid1, int *p1)
 		close(p1[1]);
 		exit(0);
 	}
+	free(flags1);
 }
 
 void ft_fork2(char **param2, int pid2, int *p1)
@@ -88,4 +89,41 @@ void ft_fork2(char **param2, int pid2, int *p1)
 		execve(param2[1], flags2, NULL);
 	}
 	free(flags2);
+}
+void ft_fork_s(t_param *param1, int pid1, int *p1)
+{
+	if (pid1 < 0)
+		exit (2);
+	if (pid1 == 0)
+	{
+		p1[0] = open (param1->pathinfile, O_RDONLY | O_CLOEXEC);
+		if (p1[0] < 0)
+			perror("zsh");
+		else
+		{
+			dup2(p1[0], STDIN_FILENO);
+			dup2(p1[1], STDOUT_FILENO);
+			close(p1[0]);
+			close(p1[1]);
+			execve(param1->pathname, param1->flags, NULL);
+		}
+		close(p1[0]);
+		close(p1[1]);
+		exit(0);
+	}
+}
+
+void ft_fork2_s(t_param *param2, int pid2, int *p1)
+{
+	if (pid2 < 0)
+		exit (2);
+	if (pid2 == 0)
+	{
+		int a = open (param2->pathoutfile, O_TRUNC | O_CREAT | O_WRONLY | O_CLOEXEC, 00777);
+		dup2(p1[0], STDIN_FILENO);
+		dup2(a, STDOUT_FILENO);
+		close(p1[0]);
+		close(p1[1]);
+		execve(param2->pathname, param2->flags, NULL);
+	}
 }

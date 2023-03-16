@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:08:08 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/16 16:05:57 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/16 16:43:11 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ typedef struct s_param
     char    *pathname;
 	char    *pathinfile;
     char    *pathoutfile;
-    char    *name;
 }   t_param;
 
 char	*ft_envp(char **envp, char *pwd);
@@ -40,5 +39,7 @@ void	ft_free_cc(char **split);
 void  ft_free_param (char **param);
 void ft_fork(char **param, int pid, int *p1);
 void ft_fork2(char **param1, int pid2, int *p1);
+void ft_fork_s(t_param *param, int pid, int *p1);
+void ft_fork2_s(t_param *param1, int pid2, int *p1);
 
 #endif
