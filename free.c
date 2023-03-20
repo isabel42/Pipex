@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:45:03 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/20 17:08:07 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/20 21:16:58 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,4 +89,34 @@ void	ft_fork2(char **param2, int pid2, int *p1)
 		execve(param2[1], flags2, NULL);
 	}
 	free(flags2);
+}
+
+
+void	ft_fork_final(char **param, int *p1, char **flags)
+{
+	int		a;
+
+	if (param[3] != NULL)
+		a = open (param[3], O_TRUNC | O_CREAT | O_WRONLY | O_CLOEXEC, 00777);
+	else
+		a = p1[1];
+	if (param[2] != NULL)
+	{
+		p1[0] = open (param[2], O_RDONLY | O_CLOEXEC);
+		if (p1[0] < 0 && param[1] != NULL)
+			perror(param[5]);
+		else if (p1[0] >= 0)
+		{
+			dup2(p1[0], STDIN_FILENO);
+			dup2(a, STDOUT_FILENO);
+			close(p1[0]);
+			close(p1[1]);
+			execve(param[1], flags, NULL);
+		}
+	}
+	dup2(p1[0], STDIN_FILENO);
+	dup2(a, STDOUT_FILENO);
+	close(p1[0]);
+	close(p1[1]);
+	execve(param[1], flags, NULL);
 }
