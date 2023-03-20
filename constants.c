@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/16 16:45:18 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/20 16:57:46 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,34 @@ char	*ft_find_pwd(char *pwd, char *infile)
 	return (pwd_infile);
 }
 
-char	*ft_find_path(char *path, char *command)
+char	*ft_find_shell(char **envp)
+{
+	char	*envp_shell;
+	char	**shell;
+	char	*sol;
+	int		j;
+	int		i;
+
+	envp_shell = ft_envp(envp, "SHELL=");
+	shell = ft_split(envp_shell, '/');
+	j = 0;
+	i = 0;
+	while (shell[j])
+		j++;
+	if (j == 0)
+		return (NULL);
+	j--;
+	sol = ft_calloc(sizeof(sol), (ft_strlen(shell[j]) + 1));
+	while (shell[j][i] != '\0')
+	{
+		sol[i] = shell[j][i];
+		i++;
+	}
+	ft_free_cc(shell);
+	return (sol);
+}
+
+char	*ft_find_path(char *path, char *command, char **envp)
 {
 	char	**path_split;
 	char	*path_command;
@@ -53,6 +80,7 @@ char	*ft_find_path(char *path, char *command)
 		{
 			ft_free_cc(path_split);
 			free(slash_command);
+	printf("-%s-\n", path_command);
 			return (path_command);
 		}
 		free(path_command);
@@ -60,6 +88,7 @@ char	*ft_find_path(char *path, char *command)
 	}
 	ft_free_cc(path_split);
 	free(slash_command);
+	printf("%s: command not found: %s\n", ft_find_shell(envp), command);
 	return (NULL);
 }
 
@@ -69,23 +98,27 @@ char	*ft_flags(char **argv, int i)
 	int		j;
 
 	j = 0;
-	while (argv[i + 1][j] != ' ')
+	while (argv[i + 1][j] != ' ' && argv[i + 1][j] != '\0')
 		j++;
+	if (j == (int)ft_strlen(argv[i + 1]))
+		return (NULL);
 	flags = argv[i + 1] + j + 1;
 	return (flags);
 }
 
 char	**ft_param(int argc, char **argv, char **envp, int i)
 {
+	char	*argv_com;
 	char	**command;
 	char	**param;
 	char	*pathinfile;
 	char	*pathoutfile;
 
-	param = malloc(sizeof(param) * 5);
+	param = malloc(sizeof(param) * 6);
 	if (!param)
 		exit(0);
-	command = ft_split(argv[i + 1], ' ');
+	argv_com = ft_strtrim(argv[i + 1], " ");
+	command = ft_split(argv_com, ' ');
 	pathinfile = NULL;
 	if (i == 1)
 		pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[i]);
@@ -93,39 +126,11 @@ char	**ft_param(int argc, char **argv, char **envp, int i)
 	if (i == argc - 3)
 		pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[argc - 1]);
 	param[0] = ft_flags(argv, i);
-	param[1] = ft_find_path(ft_envp(envp, "PATH="), command[0]);
+	param[1] = ft_find_path(ft_envp(envp, "PATH="), command[0], envp);
 	param[2] = pathinfile;
 	param[3] = pathoutfile;
 	param[4] = argv[0];
+	param[5] = ft_find_shell(envp);
 	ft_free_cc(command);
-	return (param);
-}
-
-t_param	*ft_param_s(int argc, char **argv, char **envp, int i)
-{
-	t_param *param;
-	char	**command;
-
-	param = malloc(sizeof(param) * 1);
-	if (!param)
-		exit(0);
-	command = ft_split(argv[i + 1], ' ');
-
-	param->flags = malloc(sizeof(param->flags) * 3);
-	if(!param->flags)
-		exit(0);
-	param->flags[0] = argv[0];
-	param->flags[1] = ft_flags(argv, i);
-	param->flags[2] = NULL;
-	param->pathname = ft_find_path(ft_envp(envp, "PATH="), command[0]);;
-	// param->pathinfile = NULL;
-	// if (i == 1)
-		param->pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[1]);
-	// param->pathoutfile = NULL;
-	// if (i == argc - 3)
-		param->pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[4]);
-	ft_free_cc(command);
-	if(argc > 7)
-	return (0);
 	return (param);
 }

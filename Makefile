@@ -24,7 +24,7 @@ ${NAME}: 	${OBJS}
 				cp ./libft/libft.a ${LIB}
 				${AR} ${LIB} ${OBJS}
 				ranlib ${LIB}
-			${CC} ${CFLAGS} -o ${NAME} main.c -L. -lpipex 
+			${CC} ${CFLAGS} -o ${NAME} main.c -L. -lpipex
 
 all:		${NAME}
 
