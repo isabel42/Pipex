@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/20 16:57:46 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/20 17:08:07 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ char	*ft_find_path(char *path, char *command, char **envp)
 		{
 			ft_free_cc(path_split);
 			free(slash_command);
-	printf("-%s-\n", path_command);
 			return (path_command);
 		}
 		free(path_command);

@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:45:03 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/20 16:51:45 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/20 17:08:07 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	ft_fork(char **param1, int pid1, int *p1)
 	{
 		p1[0] = open (param1[2], O_RDONLY | O_CLOEXEC);
 		if (p1[0] < 0 && param1[1] != NULL)
-			printf("test");
+			perror(param1[5]);
 		else if (p1[0] >= 0)
 		{
 			dup2(p1[0], STDIN_FILENO);
