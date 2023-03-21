@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/21 15:31:22 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/21 17:28:16 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ char	*ft_find_path(char *path, char *command, char **envp)
 char	**ft_flags(char **argv, int i)
 {
 	char	**flags;
+	char	*only_flag;
 	int		j;
 
 	flags = malloc(sizeof(flags) * 3);
@@ -102,10 +103,19 @@ char	**ft_flags(char **argv, int i)
 	j = 0;
 	while (argv[i + 1][j] != ' ' && argv[i + 1][j] != '\0')
 		j++;
-	if (j == (int)ft_strlen(argv[i + 1]))
-		return (NULL);
+	if (argv[i + 1][j] == '\0')
+		only_flag = NULL;
+	else
+	{
+		while (argv[i + 1][j] == ' ')
+			j++;
+		if (argv[i + 1][j] == '\0')
+			only_flag = NULL;
+		else
+			only_flag = argv[i + 1] + j;
+	}
 	flags[0] = argv[0];
-	flags[1] = argv[i + 1] + j + 1;
+	flags[1] = only_flag;
 	flags[2] = NULL;
 	return (flags);
 }
