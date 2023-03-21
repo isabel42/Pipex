@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipe_param_fork.c                                  :+:      :+:    :+:   */
+/*   pipe_fork.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 15:30:21 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/21 18:29:50 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/21 18:46:54 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@ int	**ft_pipe(int argc)
 	if (argc == 4)
 	{
 		p1 = malloc(sizeof(p1) * 1);
-		if(!p1)
+		if (!p1)
 			exit(0);
 	}
 	else
 	{
 		p1 = malloc(sizeof(p1) * (argc - 4));
-		if(!p1)
+		if (!p1)
 			exit(0);
 	}
 	while (i < (argc - 4) || i == 0)
@@ -65,29 +65,25 @@ void	ft_waitpid(int *pid)
 	}
 }
 
-char	**ft_param(int argc, char **argv, char **envp, int i)
+void	ft_fork(char **param, int **p1, char **flags, int i)
 {
-	char	**command;
-	char	**param;
-	char	*pathinfile;
-	char	*pathoutfile;
+	int		a;
+	int		b;
 
-	param = malloc(sizeof(param) * 6);
-	if (!param)
-		exit(0);
-	command = ft_split(argv[i + 1], ' ');
-	pathinfile = NULL;
-	if (i == 1)
-		pathinfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[i]);
-	pathoutfile = NULL;
-	if (i == argc - 3)
-		pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[argc - 1]);
-	param[0] = ft_find_path(ft_envp(envp, "PATH="), command[0], envp);
-	param[1] = pathinfile;
-	param[2] = pathoutfile;
-	param[3] = argv[0];
-	param[4] = ft_find_shell(envp);
-	param[5] = ft_itoa(argc);
-	ft_free_cc(command);
-	return (param);
+	if (param[1] != NULL)
+	{
+		a = open (param[1], O_RDONLY | O_CLOEXEC);
+		if (a < 0 && param[0] != NULL)
+			perror(param[4]);
+	}
+	else
+		a = p1[i - 1][0];
+	if (param[2] != NULL)
+		b = open (param[2], O_TRUNC | O_CREAT | O_WRONLY | O_CLOEXEC, 00777);
+	else
+		b = p1[i][1];
+	dup2(a, STDIN_FILENO);
+	dup2(b, STDOUT_FILENO);
+	ft_closepipe(p1, ft_atoi(param[5]));
+	execve(param[0], flags, NULL);
 }
