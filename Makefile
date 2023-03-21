@@ -1,8 +1,8 @@
 SRCS	= main.c \
 			constants.c \
 			free.c \
-			pipe_param.c \
-			main_fork.c
+			pipe_fork.c \
+			param.c
 
 OBJS 	= ${SRCS:.c=.o}
 
