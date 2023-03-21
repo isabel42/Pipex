@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:49:04 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/21 16:07:07 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/21 18:40:13 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	main(int argc, char **argv, char **envp)
 	int		**p1;
 	int		i;
 
-	pid = malloc(sizeof(pid) *(argc - 3));
+	pid = ft_calloc(sizeof(pid) ,(argc - 3));
 	p1 = ft_pipe(argc);
 	i = 0;
 	while (i < (argc - 3))

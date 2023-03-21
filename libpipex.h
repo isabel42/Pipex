@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:08:08 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/21 16:06:44 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/21 18:30:31 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int		**ft_pipe(int argc);
 void	ft_closepipe(int **p1, int argc);
 void	ft_waitpid(int *pid);
 char	**ft_param(int argc, char **argv, char **envp, int i);
+
 void	ft_fork(char **param, int **p1, char **flags, int i);
 
 #endif
