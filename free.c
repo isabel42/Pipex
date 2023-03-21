@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:45:03 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/20 21:16:58 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/21 08:32:07 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,31 +92,40 @@ void	ft_fork2(char **param2, int pid2, int *p1)
 }
 
 
-void	ft_fork_final(char **param, int *p1, char **flags)
+void	ft_fork_final(char **param, int **p1, char **flags, int i)
 {
 	int		a;
+	int		j;
 
-	if (param[3] != NULL)
-		a = open (param[3], O_TRUNC | O_CREAT | O_WRONLY | O_CLOEXEC, 00777);
-	else
-		a = p1[1];
+	j = 0;
+	if (i > 0)
+	{
+		i--;
+		printf("i: %d\n", i);
+	}
+		printf("Param2: %s\n", param[2]);
 	if (param[2] != NULL)
 	{
-		p1[0] = open (param[2], O_RDONLY | O_CLOEXEC);
-		if (p1[0] < 0 && param[1] != NULL)
+		p1[i][0] = open (param[2], O_RDONLY | O_CLOEXEC);
+		if (p1[i][0] < 0 && param[1] != NULL)
 			perror(param[5]);
-		else if (p1[0] >= 0)
-		{
-			dup2(p1[0], STDIN_FILENO);
-			dup2(a, STDOUT_FILENO);
-			close(p1[0]);
-			close(p1[1]);
-			execve(param[1], flags, NULL);
-		}
 	}
-	dup2(p1[0], STDIN_FILENO);
+	if (param[3] != NULL)
+	{
+		a = open (param[3], O_TRUNC | O_CREAT | O_WRONLY | O_CLOEXEC, 00777);
+	}
+	else
+	{
+		a = p1[i][1];
+	}
+	dup2(p1[i][0], STDIN_FILENO);
+		printf("a: %d\n", a);
 	dup2(a, STDOUT_FILENO);
-	close(p1[0]);
-	close(p1[1]);
+	while (p1[j])
+	{
+		close(p1[j][0]);
+		close(p1[j][1]);
+		j++;	
+	}
 	execve(param[1], flags, NULL);
 }

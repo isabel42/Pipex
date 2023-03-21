@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/20 17:08:07 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/20 22:32:39 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,18 @@ char	*ft_flags(char **argv, int i)
 	return (flags);
 }
 
+char	**ft_flags_final (char **param)
+{
+	char	**flags;
+
+	flags = malloc(sizeof(flags) * 3);
+	if (!flags)
+		exit(0);
+	flags[0] = param[4];
+	flags[1] = param[0];
+	flags[2] = NULL;
+	return (flags);
+}
 char	**ft_param(int argc, char **argv, char **envp, int i)
 {
 	char	*argv_com;
