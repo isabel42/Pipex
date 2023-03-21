@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:49:04 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/21 15:25:39 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/21 16:07:07 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,8 @@ int	main(int argc, char **argv, char **envp)
 	int		**p1;
 	int		i;
 
-	i = 0;
 	pid = malloc(sizeof(pid) *(argc - 3));
-	if (argc == 4)
-		p1 = malloc(sizeof(p1) * 1);
-	else
-		p1 = malloc(sizeof(p1) *(argc - 4));
-	while (i < (argc - 4) || i == 0)
-	{
-		p1[i] = malloc(sizeof(p1) * 2);
-		if (pipe(p1[i]) == -1)
-			exit (1);
-		i++;
-	}
+	p1 = ft_pipe(argc);
 	i = 0;
 	while (i < (argc - 3))
 	{
@@ -45,19 +34,8 @@ int	main(int argc, char **argv, char **envp)
 		free(flags);
 		i++;
 	}
-	i = 0;
-	while (i < (argc - 4) || i == 0)
-	{
-		close(p1[i][0]);
-		close(p1[i][1]);
-		i++;
-	}
-	i = 0;
-	while (pid[i])
-	{
-		waitpid(pid[i], NULL, 0);
-		i++;
-	}
+	ft_closepipe(p1, argc);
+	ft_waitpid(pid);
 	ft_free_ii(p1, i - 1);
 	free(pid);
 	return (0);
