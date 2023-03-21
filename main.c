@@ -6,36 +6,11 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:49:04 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/21 08:32:40 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/03/21 15:25:39 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libpipex.h"
-
-// int	main(int argc, char **argv, char **envp)
-// {
-// 	char	**param1;
-// 	char	**param2;
-// 	int		pid1;
-// 	int		pid2;
-// 	int		p1[2];
-
-// 	param1 = ft_param(argc, argv, envp, 1);
-// 	param2 = ft_param(argc, argv, envp, 2);
-// 	if (pipe(p1) == -1)
-// 		return (1);
-// 	pid1 = fork();
-// 	ft_fork(param1, pid1, p1);
-// 	pid2 = fork();
-// 	ft_fork2(param2, pid2, p1);
-// 	close(p1[0]);
-// 	close(p1[1]);
-// 	waitpid(pid1, NULL, 0);
-// 	waitpid(pid2, NULL, 0);
-// 	ft_free_param(param1);
-// 	ft_free_param(param2);
-// 	return (0);
-// }
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -62,29 +37,28 @@ int	main(int argc, char **argv, char **envp)
 	while (i < (argc - 3))
 	{
 		param = ft_param(argc, argv, envp, i + 1);
-		flags = ft_flags_final(param);
+		flags = ft_flags(argv, i + 1);
 		pid[i] = fork();
-
-		if(pid[i] == 0)
-			ft_fork_final(param, p1, flags, i);
-	printf("param2 - i - pid : %s - %d - %d \n", param[2], i, pid[i]);
-		// waitpid(pid[i], NULL, 0);
+		if (pid[i] == 0)
+			ft_fork(param, p1, flags, i);
 		ft_free_param(param);
 		free(flags);
 		i++;
 	}
 	i = 0;
-	while (p1[i])
+	while (i < (argc - 4) || i == 0)
 	{
 		close(p1[i][0]);
 		close(p1[i][1]);
-		i++;	
+		i++;
 	}
 	i = 0;
 	while (pid[i])
 	{
 		waitpid(pid[i], NULL, 0);
-		i++;	
+		i++;
 	}
+	ft_free_ii(p1, i - 1);
+	free(pid);
 	return (0);
 }
