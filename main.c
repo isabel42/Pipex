@@ -11,6 +11,20 @@
 /* ************************************************************************** */
 
 #include "libpipex.h"
+void	ft_free_loop(char **param, char **flags)
+{
+	ft_free_param(param);
+	free(flags);
+}
+
+void	ft_checkarg(int argc)
+{
+	if (argc < 4)
+	{
+		ft_putstr_fd("Not enough arguments\n", 1);
+		exit(0);
+	}
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -20,7 +34,8 @@ int	main(int argc, char **argv, char **envp)
 	int		**p1;
 	int		i;
 
-	pid = ft_calloc(sizeof(pid), (argc - 3));
+	ft_checkarg(argc);
+	pid = malloc(sizeof(pid) *(argc - 3));
 	p1 = ft_pipe(argc);
 	i = 0;
 	while (i < (argc - 3))
@@ -30,8 +45,7 @@ int	main(int argc, char **argv, char **envp)
 		pid[i] = fork();
 		if (pid[i] == 0)
 			ft_fork(param, p1, flags, i);
-		ft_free_param(param);
-		free(flags);
+		ft_free_loop(param, flags);
 		i++;
 	}
 	ft_closepipe(p1, argc);
@@ -39,4 +53,5 @@ int	main(int argc, char **argv, char **envp)
 	ft_free_ii(p1, i - 1);
 	free(pid);
 	return (0);
+}
 }
