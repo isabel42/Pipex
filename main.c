@@ -54,4 +54,3 @@ int	main(int argc, char **argv, char **envp)
 	free(pid);
 	return (0);
 }
-}
