@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 18:29:21 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/05/08 15:30:32 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/05/09 14:00:10 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	**ft_param(int argc, char **argv, char **envp, int i)
 	pathoutfile = NULL;
 	if (i == argc - 3)
 		pathoutfile = ft_find_pwd(ft_envp(envp, "PWD="), argv[argc - 1]);
-	param[0] = ft_find_path(ft_envp(envp, "PATH="), command[0]);
+	param[0] = ft_find_path(ft_envp(envp, "PATH="), command[0], pathinfile);
 	param[1] = pathinfile;
 	param[2] = pathoutfile;
 	param[3] = argv[0];
