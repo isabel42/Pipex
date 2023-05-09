@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 15:30:21 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/05/09 13:53:29 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/05/09 15:16:10 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,11 +82,11 @@ void	ft_fork(char **param, int **p1, char **flags, int i)
 	else
 		a = p1[i - 1][0];
 	if (param[2] != NULL)
-		b = open (param[2], O_TRUNC | O_CREAT | O_WRONLY | O_CLOEXEC, 00777);
+		b = open (param[2], O_TRUNC | O_CREAT | O_WRONLY | O_CLOEXEC, 00644);
 	else
 		b = p1[i][1];
 	dup2(a, STDIN_FILENO);
 	dup2(b, STDOUT_FILENO);
-	ft_closepipe(p1, ft_atoi(param[5]));
+	ft_closepipe(p1, ft_atoi(param[4]));
 	execve(param[0], flags, NULL);
 }

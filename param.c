@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 18:29:21 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/05/09 14:00:10 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/05/09 15:16:10 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	**ft_param(int argc, char **argv, char **envp, int i)
 	char	*pathinfile;
 	char	*pathoutfile;
 
-	param = malloc(sizeof(param) * 6);
+	param = malloc(sizeof(param) * 5);
 	if (!param)
 		exit(0);
 	command = ft_split(argv[i + 1], ' ');
@@ -33,8 +33,7 @@ char	**ft_param(int argc, char **argv, char **envp, int i)
 	param[1] = pathinfile;
 	param[2] = pathoutfile;
 	param[3] = argv[0];
-	param[4] = NULL;
-	param[5] = ft_itoa(argc);
+	param[4] = ft_itoa(argc);
 	ft_free_cc(command);
 	return (param);
 }
