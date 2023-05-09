@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:19:45 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/21 17:28:16 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/05/08 15:33:53 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,34 +36,7 @@ char	*ft_find_pwd(char *pwd, char *infile)
 	return (pwd_infile);
 }
 
-char	*ft_find_shell(char **envp)
-{
-	char	*envp_shell;
-	char	**shell;
-	char	*sol;
-	int		j;
-	int		i;
-
-	envp_shell = ft_envp(envp, "SHELL=");
-	shell = ft_split(envp_shell, '/');
-	j = 0;
-	i = 0;
-	while (shell[j])
-		j++;
-	if (j == 0)
-		return (NULL);
-	j--;
-	sol = ft_calloc(sizeof(sol), (ft_strlen(shell[j]) + 1));
-	while (shell[j][i] != '\0')
-	{
-		sol[i] = shell[j][i];
-		i++;
-	}
-	ft_free_cc(shell);
-	return (sol);
-}
-
-char	*ft_find_path(char *path, char *command, char **envp)
+char	*ft_find_path(char *path, char *command)
 {
 	char	**path_split;
 	char	*path_command;
@@ -71,23 +44,29 @@ char	*ft_find_path(char *path, char *command, char **envp)
 	int		i;
 
 	i = 0;
-	slash_command = ft_strjoin("/", command);
-	path_split = ft_split(path, ':');
-	while (path_split[i])
+	if(command)
 	{
-		path_command = ft_strjoin(path_split[i], slash_command);
-		if (access(path_command, X_OK) == 0)
+		slash_command = ft_strjoin("/", command);
+		path_split = ft_split(path, ':');
+		while (path_split[i])
 		{
-			ft_free_cc(path_split);
-			free(slash_command);
-			return (path_command);
+			path_command = ft_strjoin(path_split[i], slash_command);
+			if (access(path_command, X_OK) == 0)
+			{
+				ft_free_cc(path_split);
+				free(slash_command);
+				return (path_command);
+			}
+			free(path_command);
+			i++;
 		}
-		free(path_command);
-		i++;
+		ft_free_cc(path_split);
+		free(slash_command);
 	}
-	ft_free_cc(path_split);
-	free(slash_command);
-	printf("%s: command not found: %s\n", ft_find_shell(envp), command);
+	ft_putstr_fd("Command not found: ", 1);
+	if(command)
+		ft_putstr_fd(command, 1);
+	ft_putstr_fd("\n", 1);
 	return (NULL);
 }
 

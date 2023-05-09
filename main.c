@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/08 19:49:04 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/30 10:57:08 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/05/08 17:21:57 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	ft_checkarg(int argc)
 		ft_putstr_fd("Not enough arguments\n", 1);
 		exit(0);
 	}
+
 }
 
 int	main(int argc, char **argv, char **envp)

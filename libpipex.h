@@ -6,7 +6,7 @@
 /*   By: itovar-n <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:08:08 by itovar-n          #+#    #+#             */
-/*   Updated: 2023/03/21 18:47:11 by itovar-n         ###   ########.fr       */
+/*   Updated: 2023/05/08 13:36:31 by itovar-n         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,7 @@
 
 char	*ft_envp(char **envp, char *pwd);
 char	*ft_find_pwd(char *pwd, char *infile);
-char	*ft_find_shell(char **envp);
-char	*ft_find_path(char *path, char *command, char **envp);
+char	*ft_find_path(char *path, char *command);
 char	**ft_flags(char **argv, int i);
 
 void	ft_free_cc(char **split);
